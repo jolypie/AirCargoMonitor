@@ -1,0 +1,30 @@
+@BaseURL = http://localhost:5171
+
+### Get all warehouses
+GET {{BaseURL}}/api/Warehouse
+Accept: application/json
+
+### Get a warehouse by Id
+GET {{BaseURL}}/api/Warehouse/1
+Accept: application/json
+
+### Add a new warehouse
+POST {{BaseURL}}/api/Warehouse
+Content-Type: application/json
+
+{
+  "warehouseCode": "W101",
+  "location": "Prague"
+}
+
+### Update a warehouse by Id
+PUT {{BaseURL}}/api/Warehouse/1
+Content-Type: application/json
+
+{
+  "warehouseCode": "W101",
+  "location": "Pardubice"
+}
+
+### Delete a warehouse by Id
+DELETE {{BaseURL}}/api/Warehouse/4

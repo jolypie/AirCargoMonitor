@@ -16,7 +16,7 @@ public class DataContext : DbContext
         // Relation
         modelBuilder.Entity<Cargo>()
             .HasOne(c => c.Warehouse)
-            .WithMany(w => w.Cargos)
+            .WithMany()
             .HasForeignKey(c => c.WarehouseId)
             .OnDelete(DeleteBehavior.SetNull); // If warehouse was deleted, cargo will stay, but without link to warehouse
 
@@ -28,7 +28,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<Airplane>()
             .HasOne(a => a.Warehouse)
-            .WithMany(w => w.Airplanes)
+            .WithMany()
             .HasForeignKey(a => a.WarehouseId)
             .OnDelete(DeleteBehavior.SetNull); // If warehouse was deleted, airplane will stay, but without link to warehouse
         

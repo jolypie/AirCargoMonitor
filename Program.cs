@@ -12,11 +12,11 @@ builder.Services.AddRazorComponents()
 // my configuration
 builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IWarehouseService, WarehouseService>();
-
+builder.Services.AddControllers();
 
 
 var app = builder.Build();
-
+app.MapControllers();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

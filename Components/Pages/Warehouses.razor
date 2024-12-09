@@ -37,7 +37,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        warehouses = await WarehouseService.GetAllWarehouses();
+        warehouses = await WarehouseService.GetAllWarehousesAsync();
     }
 
 }

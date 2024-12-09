@@ -3,6 +3,7 @@ using CargosMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargosMonitor.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241209210339_UpdateWarehouseModel")]
+    partial class UpdateWarehouseModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -222,7 +225,7 @@ namespace CargosMonitor.Migrations
             modelBuilder.Entity("CargosMonitor.Models.Airplane", b =>
                 {
                     b.HasOne("CargosMonitor.Models.Warehouse", "Warehouse")
-                        .WithMany()
+                        .WithMany("Airplanes")
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -237,7 +240,7 @@ namespace CargosMonitor.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("CargosMonitor.Models.Warehouse", "Warehouse")
-                        .WithMany()
+                        .WithMany("Cargos")
                         .HasForeignKey("WarehouseId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -248,6 +251,13 @@ namespace CargosMonitor.Migrations
 
             modelBuilder.Entity("CargosMonitor.Models.Airplane", b =>
                 {
+                    b.Navigation("Cargos");
+                });
+
+            modelBuilder.Entity("CargosMonitor.Models.Warehouse", b =>
+                {
+                    b.Navigation("Airplanes");
+
                     b.Navigation("Cargos");
                 });
 #pragma warning restore 612, 618
