@@ -32,8 +32,8 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xBcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Counter.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
+[C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Airplanes.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBaXJwbGFuZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Error.razor]
@@ -46,10 +46,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Warehouses.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VzLnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Weather.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Routes.razor]

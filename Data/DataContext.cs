@@ -22,7 +22,7 @@ public class DataContext : DbContext
 
         modelBuilder.Entity<Cargo>()
             .HasOne(c => c.Airplane)
-            .WithMany(a => a.Cargos)
+            .WithMany()
             .HasForeignKey(c => c.AirplaneId)
             .OnDelete(DeleteBehavior.SetNull); // If airplane was deleted, cargo will stay, but without link to airplane
 

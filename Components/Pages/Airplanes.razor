@@ -1,0 +1,65 @@
+﻿@page "/airplanes"
+
+@inject IAirplaneService AirplaneService
+@inject IWarehouseService WarehouseService
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Airplanes</PageTitle>
+<h1>Airplanes</h1>
+
+@if (airplanes.Count == 0)
+{
+    <p><em>No airplanes found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <th>Code</th>
+        <th>Max Load (kg)</th>
+        <th>Current Load (kg)</th>
+        <th>City</th>
+        <th>Warehouse Code</th>
+        </thead>
+        <tbody>
+        @foreach (var airplane in airplanes)
+        {
+            <tr>
+                <td>@airplane.AirplaneCode</td>
+                <td>@airplane.MaxLoad</td>
+                <td>@airplane.CurrentLoad</td>
+                <td>
+                    @(warehouses.TryGetValue(airplane.WarehouseId ?? 0, out var warehouse1)
+                        ? warehouse1.Location
+                        : "No Warehouse")
+                </td>
+                <td>
+                    @(warehouses.TryGetValue(airplane.WarehouseId ?? 0, out var warehouse2)
+                        ? warehouse2.Code
+                        : "No Warehouse")
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+
+    List<Airplane> airplanes = new List<Airplane>();
+    Dictionary<int, (string Code, string Location)> warehouses = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        airplanes = await AirplaneService.GetAllAirplanesAsync();
+        var warehouseList = await WarehouseService.GetAllWarehousesAsync();
+        warehouses = warehouseList.ToDictionary(
+            w => w.WarehouseId, 
+            w => (w.WarehouseCode, w.Location)
+        );
+    }
+
+}

@@ -23,7 +23,4 @@ public class Airplane
     [ForeignKey("Warehouse")]
     public int? WarehouseId { get; set; } 
     public Warehouse? Warehouse { get; set; }
-
-    //Navigation
-    public ICollection<Cargo> Cargos { get; set; }
 }
