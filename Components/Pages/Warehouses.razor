@@ -1,0 +1,43 @@
+﻿@page "/warehouses"
+
+@inject IWarehouseService WarehouseService
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Warehouses</PageTitle>
+<h1>Warehouses</h1>
+
+@if (warehouses.Count == 0)
+{
+    <p><em>No warehouses found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+           <th>Location</th>
+          <th>Code</th>
+        </thead>
+        <tbody>
+        @foreach (var warehouse in warehouses)
+        {
+            <tr>
+                <td>@warehouse.Location</td>
+                <td>@warehouse.WarehouseCode</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+
+    List<Warehouse> warehouses = new List<Warehouse>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        warehouses = await WarehouseService.GetAllWarehouses();
+    }
+
+}

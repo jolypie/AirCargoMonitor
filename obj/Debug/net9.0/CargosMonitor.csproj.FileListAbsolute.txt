@@ -200,3 +200,4 @@ C:\Users\bonni\RiderProjects\CargosMonitor\CargosMonitor\obj\Debug\net9.0\refint
 C:\Users\bonni\RiderProjects\CargosMonitor\CargosMonitor\obj\Debug\net9.0\CargosMonitor.pdb
 C:\Users\bonni\RiderProjects\CargosMonitor\CargosMonitor\obj\Debug\net9.0\CargosMonitor.genruntimeconfig.cache
 C:\Users\bonni\RiderProjects\CargosMonitor\CargosMonitor\obj\Debug\net9.0\ref\CargosMonitor.dll
+C:\Users\bonni\RiderProjects\CargosMonitor\CargosMonitor\obj\Debug\net9.0\CargosMonitor.sourcelink.json
