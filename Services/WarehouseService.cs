@@ -46,6 +46,10 @@ public class WarehouseService : IWarehouseService
             
             await _context.SaveChangesAsync();
         }
+        else
+        {
+            throw new Exception("Warehouse not found");
+        }
     }
     
     //DELETE warehouse
@@ -56,6 +60,10 @@ public class WarehouseService : IWarehouseService
         {
             _context.Warehouses.Remove(warehouse);
             await _context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new Exception("Warehouse not found");
         }
     }
 }

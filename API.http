@@ -28,3 +28,39 @@ Content-Type: application/json
 
 ### Delete a warehouse by Id
 DELETE {{BaseURL}}/api/Warehouse/4
+
+//////////////////////////////////////////////
+
+### Get all airplanes
+GET {{BaseURL}}/api/Airplane
+Accept: application/json
+
+### Get an airplane by Id
+GET {{BaseURL}}/api/Airplane/1
+Accept: application/json
+
+### Add a new airplane
+POST {{BaseURL}}/api/Airplane
+Content-Type: application/json
+
+{
+  "airplaneCode": "A109",
+  "maxLoad": 5000.00,
+  "warehouseId": 1
+}
+
+### Update an airplane by Id
+PUT {{BaseURL}}/api/Airplane/1
+Content-Type: application/json
+
+{
+  "airplaneCode": "A101",
+  "maxLoad": 6000.00,
+  "currentLoad": 2000.00,
+  "warehouseId": 2
+}
+
+### Delete an airplane by Id
+DELETE {{BaseURL}}/api/Airplane/4
+
+//////////////////////////////////////////////
