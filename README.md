@@ -1,7 +1,7 @@
 # Air Cargo Managment System (MVP)
 
 ## Overview
-This project is a basic Air Cargo Managment System built with **ASP.NET Core**, **Entity Framework**, and **Blazor Server**. The current implementation represents the ** MVP** stage.
+This project is a basic Air Cargo Managment System built with **ASP.NET Core**, **Entity Framework**, and **Blazor Server**. The current implementation represents the **MVP** stage.
 
 ## Implemented Features
 
