@@ -1,6 +1,7 @@
 ﻿@page "/more-about-warehouse/{WarehouseId:int}"
 @inject IWarehouseService WarehouseService
 @inject ICargoService CargoService
+@inject IAirplaneService AirplaneService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -14,13 +15,13 @@
     </thead>
     <tbody>
     <tr>
-        <td >@CurrentWarehouse.Location</td>
+        <td>@CurrentWarehouse.Location</td>
         <td>@CurrentWarehouse.WarehouseCode</td>
     </tr>
     </tbody>
 </table>
 
-<h3>All packages in @CurrentWarehouse.WarehouseCode Warehouse</h3>
+<h3>All cargos in @CurrentWarehouse.WarehouseCode Warehouse</h3>
 
 <table class="table">
     <thead>
@@ -51,12 +52,44 @@
     </tbody>
 </table>
 
+<h3>All airplanes that are attached to @CurrentWarehouse.WarehouseCode Warehouse</h3>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Airplane Code</th>
+        <th>Max Load (kg)</th>
+        <th>Current Load (kg)</th>
+    </tr>
+    </thead>
+    <tbody>
+    @if (CargosInWarehouse is not null && CargosInWarehouse.Any())
+    {
+        @foreach (var airplane in AirplanesInWarehouse)
+        {
+            <tr>
+                <td>@airplane.AirplaneCode</td>
+                <td>@airplane.MaxLoad</td>
+                <td>@airplane.CurrentLoad</td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="3">No airplanes found for this warehouse.</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
 @code {
     [Parameter] public int? WarehouseId { get; set; }
 
     public Warehouse CurrentWarehouse { get; set; } = new();
     public List<Cargo> CargosInWarehouse { get; set; } = new();
-    
+    public List<Airplane> AirplanesInWarehouse { get; set; } = new();
+
     protected override async Task OnParametersSetAsync()
     {
         if (WarehouseId is not null)
@@ -67,10 +100,10 @@
                 CurrentWarehouse = warehouse;
             }
         }
-        
+
         CargosInWarehouse = await CargoService.GetCargosByWarehouseIdAsync((int)WarehouseId);
+        AirplanesInWarehouse = await AirplaneService.GetAirplanesByWarehouseIdAsync((int)WarehouseId);
     }
-    
-    
-    
+
+
 }
