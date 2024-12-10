@@ -1,0 +1,71 @@
+﻿@page "/edit-airplane"
+@page "/edit-airplane/{AirplaneId:int}"
+@inject IAirplaneService AirplaneService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@if (AirplaneId is null)
+{
+    <PageTitle>Add a New Airplane</PageTitle>
+    <h3>Add a New Airplane</h3>
+}
+else if (CurrentAirplane is not null)
+{
+    <PageTitle>Edit "@CurrentAirplane.AirplaneCode"</PageTitle>
+    <h3>Edit "@CurrentAirplane.AirplaneCode"</h3>
+}
+else
+{
+    <h3>Loading...</h3>
+}
+
+<EditForm Model="CurrentAirplane" OnSubmit="HandleSubmit">
+    <div>
+        <label for="code">Code</label>
+        <InputText id="code" @bind-Value="CurrentAirplane.AirplaneCode" class="form-control" />
+    </div>
+    <div>
+        <label for="capacity">Max Load</label>
+        <InputNumber id="capacity" @bind-Value="CurrentAirplane.MaxLoad" class="form-control" />
+    </div>
+    <div>
+        <label for="location">CurrentLoad</label>
+        <InputNumber id="location" @bind-Value="CurrentAirplane.CurrentLoad" class="form-control" />
+    </div>   
+    <button type="submit" class="btn btn-success">Save</button>
+</EditForm>
+
+
+@code {
+    [Parameter] public int? AirplaneId { get; set; }
+
+    public Airplane CurrentAirplane { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (AirplaneId is not null)
+        {
+            var airplane = await AirplaneService.GetAirplaneByIdAsync((int)AirplaneId);
+            if (airplane is not null)
+            {
+                CurrentAirplane = airplane;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (AirplaneId is not null)
+        {
+            // Update
+            await AirplaneService.UpdateAirplaneAsync(CurrentAirplane, (int)AirplaneId);
+            NavigationManager.NavigateTo("/airplanes");
+        }
+        else
+        {
+            // Add
+            await AirplaneService.AddAirplaneAsync(CurrentAirplane);
+            NavigationManager.NavigateTo("/airplanes");
+        }
+    }
+}
