@@ -27,25 +27,42 @@ else
                 <td>@warehouse.WarehouseCode</td>
                 <td>
                     <button class="btn btn-primary" @onclick="@(() => EditWarehouse(warehouse.WarehouseId))">Edit</button>
-                </td>                
+                </td>
                 <td>
-                    <button class="btn btn-danger" @onclick="@(() => DeleteWarehouse(warehouse.WarehouseId))">Delete</button>
+                    <button class="btn btn-danger" @onclick="@(() => ShowDeleteConfirmation(warehouse.WarehouseId))">Delete</button>
                 </td>
             </tr>
         }
         </tbody>
     </table>
-    
+
     <button class="btn btn-primary" @onclick="AddWarehouse">Add a New Warehouse</button>
-    
-    
 }
 
+<!-- Modal -->
+<div class="modal fade show" tabindex="-1" role="dialog" style="display: @(isDeleteModalVisible ? "block" : "none");">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Deletion</h5>
+                <button type="button" class="btn-close" @onclick="HideDeleteConfirmation" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this warehouse?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" @onclick="HideDeleteConfirmation">Cancel</button>
+                <button type="button" class="btn btn-danger" @onclick="ConfirmDeleteWarehouse">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @code {
-
     List<Warehouse> warehouses = new List<Warehouse>();
+    bool isDeleteModalVisible = false;
+    int warehouseIdToDelete = 0;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,17 +72,32 @@ else
     void EditWarehouse(int id)
     {
         NavigationManager.NavigateTo($"/edit-warehouse/{id}");
-    }  
-    
+    }
+
     void AddWarehouse()
     {
         NavigationManager.NavigateTo($"/edit-warehouse");
-    }  
-    
-    async Task DeleteWarehouse(int id)
-    {
-        await WarehouseService.DeleteWarehouseAsync(id);
-        warehouses = await WarehouseService.GetAllWarehousesAsync();
     }
 
+    void ShowDeleteConfirmation(int id)
+    {
+        isDeleteModalVisible = true;
+        warehouseIdToDelete = id;
+    }
+
+    void HideDeleteConfirmation()
+    {
+        isDeleteModalVisible = false;
+        warehouseIdToDelete = 0;
+    }
+
+    async Task ConfirmDeleteWarehouse()
+    {
+        if (warehouseIdToDelete != 0)
+        {
+            await WarehouseService.DeleteWarehouseAsync(warehouseIdToDelete);
+            warehouses = await WarehouseService.GetAllWarehousesAsync();
+        }
+        HideDeleteConfirmation();
+    }
 }
