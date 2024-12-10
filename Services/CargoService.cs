@@ -16,7 +16,10 @@ public class CargoService : ICargoService
     // GET all cargos
     public async Task<List<Cargo>> GetAllCargosAsync()
     {
-        var result = await _context.Cargos.ToListAsync();
+        var result = await _context.Cargos
+            .Include(c => c.Warehouse)
+            .Include(c => c.Airplane)
+            .ToListAsync();
         return result;
     }
     
@@ -31,71 +34,42 @@ public class CargoService : ICargoService
     // POST one cargo
     public async Task AddCargoAsync(Cargo cargo)
     {
-        try
+        if (cargo.Status == default)
         {
-            if (cargo.Status == CargoStatus.InWarehouse && cargo.WarehouseId == null)
-            {
-                throw new InvalidOperationException("Cargo must be assigned to a warehouse.");
-            }
-
-            if (cargo.Status == CargoStatus.InPlane && cargo.AirplaneId == null)
-            {
-                throw new InvalidOperationException("Cargo must be assigned to an airplane.");
-            }
-
-            if (cargo.Status != CargoStatus.InWarehouse && cargo.Status != CargoStatus.InPlane)
-            {
-                throw new InvalidOperationException("Cargo must be either in a warehouse or in a plane.");
-            }
-
-            await _context.Cargos.AddAsync(cargo);
-            await _context.SaveChangesAsync();
+            cargo.Status = CargoStatus.InWarehouse; // Статус по умолчанию
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error adding cargo: {ex.Message}");
-            throw;
-        }
+
+        ValidateCargoStatus(cargo);
+
+        await _context.Cargos.AddAsync(cargo);
+        await _context.SaveChangesAsync();
     }
     
     // PUT one cargo
     public async Task UpdateCargoAsync(Cargo updatedCargo, int id)
     {
-        var dbCargo = await _context.Cargos.FindAsync(id);
-        if (dbCargo != null)
+        var dbCargo = await _context.Cargos.FindAsync(id) 
+                      ?? throw new Exception("Cargo not found");
+
+        dbCargo.CargoCode = updatedCargo.CargoCode;
+        dbCargo.Description = updatedCargo.Description;
+        dbCargo.Weight = updatedCargo.Weight;
+        dbCargo.Status = updatedCargo.Status;
+
+        ValidateCargoStatus(updatedCargo);
+
+        if (updatedCargo.Status == CargoStatus.InWarehouse)
         {
-            dbCargo.CargoCode = updatedCargo.CargoCode;
-            dbCargo.Description = updatedCargo.Description;
-            dbCargo.Weight = updatedCargo.Weight;
-            dbCargo.Status = updatedCargo.Status;
-
-            if (updatedCargo.Status == CargoStatus.InWarehouse && updatedCargo.WarehouseId == null)
-            {
-                throw new InvalidOperationException("Cargo must be assigned to a warehouse.");
-            }
-
-            if (updatedCargo.Status == CargoStatus.InPlane && updatedCargo.AirplaneId == null)
-            {
-                throw new InvalidOperationException("Cargo must be assigned to an airplane.");
-            }
-
-            if (updatedCargo.Status == CargoStatus.InWarehouse)
-            {
-                dbCargo.WarehouseId = updatedCargo.WarehouseId;
-                dbCargo.AirplaneId = null;
-            }
-            else if (updatedCargo.Status == CargoStatus.InPlane)
-            {
-                dbCargo.AirplaneId = updatedCargo.AirplaneId;
-                dbCargo.WarehouseId = null;
-            }
-
-            await _context.SaveChangesAsync();
+            dbCargo.WarehouseId = updatedCargo.WarehouseId;
+            dbCargo.AirplaneId = null;
         }
-        else
+        else if (updatedCargo.Status == CargoStatus.InPlane)
         {
-            throw new Exception("Cargo not found");
+            dbCargo.AirplaneId = updatedCargo.AirplaneId;
+            dbCargo.WarehouseId = null;
         }
+
+        await _context.SaveChangesAsync();
     }
     
     // DELETE one cargo
@@ -110,6 +84,28 @@ public class CargoService : ICargoService
         else
         {
             throw new Exception("Cargo not found");
+        }
+    }
+    
+    
+    
+    
+    
+    private void ValidateCargoStatus(Cargo cargo)
+    {
+        if (cargo.Status == CargoStatus.InWarehouse && cargo.WarehouseId == null)
+        {
+            throw new InvalidOperationException("Cargo must be assigned to a warehouse.");
+        }
+
+        if (cargo.Status == CargoStatus.InPlane && cargo.AirplaneId == null)
+        {
+            throw new InvalidOperationException("Cargo must be assigned to an airplane.");
+        }
+
+        if (cargo.Status != CargoStatus.InWarehouse && cargo.Status != CargoStatus.InPlane)
+        {
+            throw new InvalidOperationException("Invalid cargo status.");
         }
     }
 }

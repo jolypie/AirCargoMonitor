@@ -1,6 +1,7 @@
 ﻿@page "/edit-airplane"
 @page "/edit-airplane/{AirplaneId:int}"
 @inject IAirplaneService AirplaneService
+@inject IWarehouseService WarehouseService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -22,27 +23,44 @@ else
 <EditForm Model="CurrentAirplane" OnSubmit="HandleSubmit">
     <div>
         <label for="code">Code</label>
-        <InputText id="code" @bind-Value="CurrentAirplane.AirplaneCode" class="form-control" />
+        <InputText id="code" @bind-Value="CurrentAirplane.AirplaneCode" class="form-control"/>
     </div>
-    <div>
-        <label for="capacity">Max Load</label>
-        <InputNumber id="capacity" @bind-Value="CurrentAirplane.MaxLoad" class="form-control" />
+    <div class="mt-3">
+        <label for="maxload">Max Load</label>
+        <InputNumber id="maxload" @bind-Value="CurrentAirplane.MaxLoad" class="form-control"/>
     </div>
-    <div>
-        <label for="location">CurrentLoad</label>
-        <InputNumber id="location" @bind-Value="CurrentAirplane.CurrentLoad" class="form-control" />
-    </div>   
-    <button type="submit" class="btn btn-success">Save</button>
+    <div class="mt-3">
+        <label for="currentload">Current Load</label>
+        <InputNumber id="currentload" @bind-Value="CurrentAirplane.CurrentLoad" class="form-control"/>
+    </div>
+    <div class="mt-3">
+        <label for="warehouse">Warehouse</label>
+        <InputSelect id="warehouse" @bind-Value="CurrentAirplane.WarehouseId" class="form-control">
+            <option value="">-- Select a Warehouse --</option>
+            @foreach (var warehouse in Warehouses)
+            {
+                <option value="@warehouse.WarehouseId">@warehouse.WarehouseCode | @warehouse.Location</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </div>
 </EditForm>
-
 
 @code {
     [Parameter] public int? AirplaneId { get; set; }
 
     public Airplane CurrentAirplane { get; set; } = new();
+    public List<Warehouse> Warehouses { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
+        // Load warehouses
+        Warehouses = await WarehouseService.GetAllWarehousesAsync();
+
+        // Load airplane if editing
         if (AirplaneId is not null)
         {
             var airplane = await AirplaneService.GetAirplaneByIdAsync((int)AirplaneId);
@@ -55,17 +73,28 @@ else
 
     async Task HandleSubmit()
     {
+        if (string.IsNullOrWhiteSpace(CurrentAirplane.AirplaneCode))
+        {
+            Console.WriteLine("Error: Airplane code is required.");
+            return;
+        }
+
         if (AirplaneId is not null)
         {
-            // Update
+            // Update existing airplane
             await AirplaneService.UpdateAirplaneAsync(CurrentAirplane, (int)AirplaneId);
-            NavigationManager.NavigateTo("/airplanes");
         }
         else
         {
-            // Add
+            // Add new airplane
             await AirplaneService.AddAirplaneAsync(CurrentAirplane);
-            NavigationManager.NavigateTo("/airplanes");
         }
+
+        NavigationManager.NavigateTo("/airplanes");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/airplanes");
     }
 }

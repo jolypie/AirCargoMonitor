@@ -22,13 +22,17 @@ else
 <EditForm Model="CurrentWarehouse" OnSubmit="HandleSubmit">
     <div>
         <label for="title">Title</label>
-        <InputText id="title" @bind-Value="CurrentWarehouse.WarehouseCode" class="form-control" />
+        <InputText id="title" @bind-Value="CurrentWarehouse.WarehouseCode" class="form-control"/>
     </div>
-    <div>
+    <div class="mt-3">
         <label for="location">Location</label>
-        <InputText id="location" @bind-Value="CurrentWarehouse.Location" class="form-control" />
+        <InputText id="location" @bind-Value="CurrentWarehouse.Location" class="form-control"/>
     </div>
-    <button type="submit" class="btn btn-success">Save</button>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </div>
+
 </EditForm>
 
 
@@ -64,4 +68,10 @@ else
             NavigationManager.NavigateTo("/warehouses");
         }
     }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/warehouses");
+    }
+
 }

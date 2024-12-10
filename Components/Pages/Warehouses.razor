@@ -16,6 +16,7 @@ else
         <thead>
         <th>Location</th>
         <th>Code</th>
+        <th>More Information</th>
         <th>Edit</th>
         <th>Delete</th>
         </thead>
@@ -25,6 +26,9 @@ else
             <tr>
                 <td>@warehouse.Location</td>
                 <td>@warehouse.WarehouseCode</td>
+                <td>
+                    <button class="btn btn-success">More</button>
+                </td>
                 <td>
                     <button class="btn btn-primary" @onclick="@(() => EditWarehouse(warehouse.WarehouseId))">Edit</button>
                 </td>

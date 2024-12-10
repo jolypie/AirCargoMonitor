@@ -1,0 +1,107 @@
+﻿@page "/edit-cargo"
+@page "/edit-cargo/{CargoId:int}"
+@inject ICargoService CargoService
+@inject IWarehouseService WarehouseService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@if (CargoId is null)
+{
+    <PageTitle>Add a New Cargo</PageTitle>
+    <h3>Add a New Cargo</h3>
+}
+else if (CurrentCargo is not null)
+{
+    <PageTitle>Edit "@CurrentCargo.CargoCode"</PageTitle>
+    <h3>Edit "@CurrentCargo.CargoCode"</h3>
+    
+}
+else
+{
+    <h3>Loading...</h3>
+}
+
+<EditForm Model="CurrentCargo" OnSubmit="HandleSubmit">
+    <div>
+        <label for="code">Code</label>
+        <InputText id="code" @bind-Value="CurrentCargo.CargoCode" class="form-control"/>
+    </div>
+    <div class="mt-3">
+        <label for="description">Description</label>
+        <InputText id="description" @bind-Value="CurrentCargo.Description" class="form-control"/>
+    </div>   
+    <div class="mt-3">
+        <label for="weight">Weight</label>
+        <InputNumber id="weight" @bind-Value="CurrentCargo.Weight" class="form-control"/>
+    </div>
+    <div class="mt-3">
+        <label for="warehouse">Warehouse</label>
+        <InputSelect id="warehouse" @bind-Value="CurrentCargo.WarehouseId" class="form-control">
+            <option value="">-- Select a Warehouse --</option>
+            @foreach (var warehouse in Warehouses)
+            {
+                <option value="@warehouse.WarehouseId">@warehouse.WarehouseCode | @warehouse.Location</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mt-3">
+        <button type="submit" class="btn btn-success">Save</button>
+        <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public int? CargoId { get; set; }
+
+    public Cargo CurrentCargo { get; set; } = new();
+    public List<Warehouse> Warehouses { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Load warehouses
+        Warehouses = await WarehouseService.GetAllWarehousesAsync();
+
+        // Load cargo if editing
+        if (CargoId is not null)
+        {
+            var cargo = await CargoService.GetCargoByIdAsync((int)CargoId);
+            if (cargo is not null)
+            {
+                CurrentCargo = cargo;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (string.IsNullOrWhiteSpace(CurrentCargo.CargoCode))
+        {
+            Console.WriteLine("Error: Cargo code is required.");
+            return;
+        }
+
+        if (CurrentCargo.WarehouseId == null)
+        {
+            Console.WriteLine("Error: Warehouse must be selected.");
+            return;
+        }
+
+        if (CargoId is not null)
+        {
+            // Update existing cargo
+            await CargoService.UpdateCargoAsync(CurrentCargo, (int)CargoId);
+        }
+        else
+        {
+            // Add new cargo
+            await CargoService.AddCargoAsync(CurrentCargo);
+        }
+
+        NavigationManager.NavigateTo("/cargos");
+    }
+
+    void Cancel()
+    {
+        NavigationManager.NavigateTo("/cargos");
+    }
+}
