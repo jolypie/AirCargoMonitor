@@ -9,4 +9,6 @@ public interface IAirplaneService
     Task AddAirplaneAsync(Airplane airplane);
     Task UpdateAirplaneAsync(Airplane airplane, int id);
     Task DeleteAirplaneAsync(int id);
+    
+    Task<List<Airplane>> GetAirplanesByWarehouseIdAsync(int warehouseId);
 }

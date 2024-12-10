@@ -69,4 +69,13 @@ public class AirplaneService : IAirplaneService
             throw new Exception("Airplane not found");
         }
     }
+    
+    
+    //GET all airplanes that are attached to a particular warehouse by id
+    public async Task<List<Airplane>> GetAirplanesByWarehouseIdAsync(int WarehouseId)
+    {
+        return await _context.Airplanes
+            .Where(a => a.WarehouseId == WarehouseId)
+            .ToListAsync();
+    }    
 }

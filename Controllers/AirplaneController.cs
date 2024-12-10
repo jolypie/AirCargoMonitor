@@ -61,4 +61,16 @@ public class AirplaneController : ControllerBase
         var airplanes = await _airplaneService.GetAllAirplanesAsync();
         return Ok(airplanes);
     }
+    
+    [HttpGet("Warehouse/{WarehouseId}")]
+    public async Task<IActionResult> GetAirplanesByWarehouseIdAsync(int WarehouseId)
+    {
+        var airplanes = await _airplaneService.GetAirplanesByWarehouseIdAsync(WarehouseId);
+        if (airplanes == null || airplanes.Count == 0)
+        {
+            return NotFound(new { Message = "No airplanes found for this warehouse." });
+        }
+
+        return Ok(airplanes);
+    }  
 }
