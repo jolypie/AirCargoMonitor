@@ -41,6 +41,9 @@ else
                         : "No Warehouse")
                 </td>
                 <td>
+                    <button class="btn btn-success" @onclick="@((() => MoreAirplane(airplane.AirplaneId)))">More</button>
+                </td>
+                <td>
                     <button class="btn btn-primary" @onclick="() => EditAirplane(airplane.AirplaneId)">Edit</button>
                 </td>
                 <td>
@@ -93,6 +96,11 @@ else
     void EditAirplane(int id)
     {
         NavigationManager.NavigateTo($"/edit-airplane/{id}");
+    }
+    
+    void MoreAirplane(int id)
+    {
+        NavigationManager.NavigateTo($"/more-about-airplane/{id}");
     }
 
     void AddAirplane()
