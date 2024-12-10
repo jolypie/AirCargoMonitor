@@ -1,0 +1,67 @@
+﻿@page "/edit-warehouse"
+@page "/edit-warehouse/{WarehouseId:int}"
+@inject IWarehouseService WarehouseService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+@if (WarehouseId is null)
+{
+    <PageTitle>Add a New Warehouse</PageTitle>
+    <h3>Add a New Warehouse</h3>
+}
+else if (CurrentWarehouse is not null)
+{
+    <PageTitle>Edit "@CurrentWarehouse.WarehouseCode"</PageTitle>
+    <h3>Edit "@CurrentWarehouse.WarehouseCode"</h3>
+}
+else
+{
+    <h3>Loading...</h3>
+}
+
+<EditForm Model="CurrentWarehouse" OnSubmit="HandleSubmit">
+    <div>
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="CurrentWarehouse.WarehouseCode" class="form-control" />
+    </div>
+    <div>
+        <label for="location">Location</label>
+        <InputText id="location" @bind-Value="CurrentWarehouse.Location" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+</EditForm>
+
+
+@code {
+    [Parameter] public int? WarehouseId { get; set; }
+
+    public Warehouse CurrentWarehouse { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (WarehouseId is not null)
+        {
+            var warehouse = await WarehouseService.GetWarehouseByIdAsync((int)WarehouseId);
+            if (warehouse is not null)
+            {
+                CurrentWarehouse = warehouse;
+            }
+        }
+    }
+
+    async Task HandleSubmit()
+    {
+        if (WarehouseId is not null)
+        {
+            //Update
+            await WarehouseService.UpdateWarehouseAsync(CurrentWarehouse, (int)WarehouseId);
+            NavigationManager.NavigateTo("/warehouses");
+        }
+        else
+        {
+            //Add
+            await WarehouseService.AddWarehouseAsync(CurrentWarehouse);
+            NavigationManager.NavigateTo("/warehouses");
+        }
+    }
+}

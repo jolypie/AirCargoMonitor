@@ -1,5 +1,5 @@
 ﻿@page "/warehouses"
-
+@inject NavigationManager NavigationManager
 @inject IWarehouseService WarehouseService
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
@@ -14,8 +14,10 @@ else
 {
     <table class="table">
         <thead>
-           <th>Location</th>
-          <th>Code</th>
+        <th>Location</th>
+        <th>Code</th>
+        <th>Edit</th>
+        <th>Delete</th>
         </thead>
         <tbody>
         @foreach (var warehouse in warehouses)
@@ -23,10 +25,20 @@ else
             <tr>
                 <td>@warehouse.Location</td>
                 <td>@warehouse.WarehouseCode</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="@(() => EditWarehouse(warehouse.WarehouseId))">Edit</button>
+                </td>                
+                <td>
+                    <button class="btn btn-danger" @onclick="@(() => DeleteWarehouse(warehouse.WarehouseId))">Delete</button>
+                </td>
             </tr>
         }
         </tbody>
     </table>
+    
+    <button class="btn btn-primary" @onclick="AddWarehouse">Add a New Warehouse</button>
+    
+    
 }
 
 
@@ -37,6 +49,22 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        warehouses = await WarehouseService.GetAllWarehousesAsync();
+    }
+
+    void EditWarehouse(int id)
+    {
+        NavigationManager.NavigateTo($"/edit-warehouse/{id}");
+    }  
+    
+    void AddWarehouse()
+    {
+        NavigationManager.NavigateTo($"/edit-warehouse");
+    }  
+    
+    async Task DeleteWarehouse(int id)
+    {
+        await WarehouseService.DeleteWarehouseAsync(id);
         warehouses = await WarehouseService.GetAllWarehousesAsync();
     }
 
