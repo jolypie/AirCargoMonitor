@@ -61,6 +61,33 @@ public class CargoController : ControllerBase
         var cargos = await _cargoService.GetAllCargosAsync();
         return Ok(cargos);
     }
+    
+    
+    
+    [HttpGet("Warehouse/{WarehouseId}")]
+    public async Task<IActionResult> GetCargosByWarehouseId(int WarehouseId)
+    {
+        var cargos = await _cargoService.GetCargosByWarehouseIdAsync(WarehouseId);
+        if (cargos == null || cargos.Count == 0)
+        {
+            return NotFound(new { Message = "No cargos found for this warehouse." });
+        }
+
+        return Ok(cargos);
+    }   
+    
+    
+    [HttpGet("Airplane/{AirplaneId}")]
+    public async Task<IActionResult> GetCargosByAirplaneIdAsync(int AirplaneId)
+    {
+        var cargos = await _cargoService.GetCargosByAirplaneIdAsync(AirplaneId);
+        if (cargos == null || cargos.Count == 0)
+        {
+            return NotFound(new { Message = "No cargos found for this airplane." });
+        }
+
+        return Ok(cargos);
+    }
 }
 
 

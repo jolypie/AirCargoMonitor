@@ -86,8 +86,23 @@ public class CargoService : ICargoService
             throw new Exception("Cargo not found");
         }
     }
+
+
+    //GET all cargos that are attached to a particular warehouse by id
+    public async Task<List<Cargo>> GetCargosByWarehouseIdAsync(int WarehouseId)
+    {
+        return await _context.Cargos
+            .Where(c => c.WarehouseId == WarehouseId)
+            .ToListAsync();
+    }    
     
-    
+    //GET all cargos that are attached to a particular warehouse by id
+    public async Task<List<Cargo>> GetCargosByAirplaneIdAsync(int AirplaneId)
+    {
+        return await _context.Cargos
+            .Where(c => c.AirplaneId == AirplaneId)
+            .ToListAsync();
+    }
     
     
     

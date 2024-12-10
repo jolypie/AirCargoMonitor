@@ -9,4 +9,7 @@ public interface ICargoService
     Task AddCargoAsync(Cargo cargo);
     Task UpdateCargoAsync(Cargo cargo, int id);
     Task DeleteCargoAsync(int id);
+    
+    Task<List<Cargo>> GetCargosByWarehouseIdAsync(int warehouseId);
+    Task<List<Cargo>> GetCargosByAirplaneIdAsync(int airplaneId);
 }
