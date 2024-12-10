@@ -6,8 +6,7 @@ namespace CargosMonitor.Models;
 public enum CargoStatus
 {
     InWarehouse,
-    InPlane,
-    Pending
+    InPlane
 }
 
 public class Cargo
@@ -20,11 +19,16 @@ public class Cargo
     public string CargoCode { get; set; }
     
     [Required]
+    [MaxLength(255)]
+    public string Description { get; set; }
+    
+    [Required]
     [Column(TypeName = "decimal(18,2)")]
     public decimal Weight { get; set; }
     
     [Required]
     public CargoStatus Status { get; set; }
+    
 
     [ForeignKey("Airplane")] 
     public int? AirplaneId { get; set; }

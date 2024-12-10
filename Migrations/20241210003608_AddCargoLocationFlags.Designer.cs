@@ -3,6 +3,7 @@ using CargosMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargosMonitor.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241210003608_AddCargoLocationFlags")]
+    partial class AddCargoLocationFlags
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -97,6 +100,12 @@ namespace CargosMonitor.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<bool>("IsInAirplane")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsInWarehouse")
+                        .HasColumnType("bit");
+
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -120,6 +129,8 @@ namespace CargosMonitor.Migrations
                             CargoId = 1,
                             CargoCode = "C101",
                             Description = "Electronics",
+                            IsInAirplane = false,
+                            IsInWarehouse = true,
                             Status = 0,
                             WarehouseId = 1,
                             Weight = 500m
@@ -129,6 +140,8 @@ namespace CargosMonitor.Migrations
                             CargoId = 2,
                             CargoCode = "C102",
                             Description = "Clothing",
+                            IsInAirplane = false,
+                            IsInWarehouse = true,
                             Status = 0,
                             WarehouseId = 1,
                             Weight = 300m
@@ -138,6 +151,8 @@ namespace CargosMonitor.Migrations
                             CargoId = 3,
                             CargoCode = "C103",
                             Description = "Furniture",
+                            IsInAirplane = false,
+                            IsInWarehouse = true,
                             Status = 0,
                             WarehouseId = 1,
                             Weight = 1000m
@@ -147,6 +162,8 @@ namespace CargosMonitor.Migrations
                             CargoId = 4,
                             CargoCode = "C104",
                             Description = "Medical Supplies",
+                            IsInAirplane = false,
+                            IsInWarehouse = true,
                             Status = 0,
                             WarehouseId = 2,
                             Weight = 200m
@@ -154,17 +171,20 @@ namespace CargosMonitor.Migrations
                         new
                         {
                             CargoId = 5,
-                            AirplaneId = 1,
-                            CargoCode = "C105",
+                            CargoCode = "C106",
                             Description = "Machinery Parts",
-                            Status = 1,
+                            IsInAirplane = false,
+                            IsInWarehouse = false,
+                            Status = 0,
                             Weight = 1500m
                         },
                         new
                         {
                             CargoId = 6,
-                            CargoCode = "C106",
+                            CargoCode = "C108",
                             Description = "Industrial Equipment",
+                            IsInAirplane = false,
+                            IsInWarehouse = true,
                             Status = 0,
                             WarehouseId = 1,
                             Weight = 1200m
@@ -172,19 +192,21 @@ namespace CargosMonitor.Migrations
                         new
                         {
                             CargoId = 7,
-                            AirplaneId = 2,
-                            CargoCode = "C107",
+                            CargoCode = "C112",
                             Description = "Automotive Parts",
-                            Status = 1,
+                            IsInAirplane = false,
+                            IsInWarehouse = false,
+                            Status = 0,
                             Weight = 900m
                         },
                         new
                         {
                             CargoId = 8,
-                            AirplaneId = 3,
-                            CargoCode = "C108",
+                            CargoCode = "C118",
                             Description = "Chemical Products",
-                            Status = 1,
+                            IsInAirplane = false,
+                            IsInWarehouse = false,
+                            Status = 0,
                             Weight = 850m
                         });
                 });

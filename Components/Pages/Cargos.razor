@@ -1,0 +1,46 @@
+﻿@page "/cargos"
+
+@inject ICargoService CargoService
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+<PageTitle>Cargos</PageTitle>
+<h1>Cargos</h1>
+
+@if (cargos.Count == 0)
+{
+    <p><em>No cargos found.</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <th>Cargo Code</th>
+        <th>Description</th>
+        <th>Weight (kg)</th>
+        <th>Status</th>
+        <th>Location</th>
+        </thead>
+        <tbody>
+        @foreach (var cargo in cargos)
+        {
+            <tr>
+                <td>@cargo.CargoCode</td>
+                <td>@cargo.Description</td>
+                <td>@cargo.Weight</td>
+                <td>@cargo.Status</td>
+                <td>@cargo.AirplaneId</td>
+                <td>@cargo.WarehouseId</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Cargo> cargos = new List<Cargo>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        cargos = await CargoService.GetAllCargosAsync();
+    }
+}

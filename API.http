@@ -64,3 +64,42 @@ Content-Type: application/json
 DELETE {{BaseURL}}/api/Airplane/4
 
 //////////////////////////////////////////////
+
+### Get all cargos
+GET {{BaseURL}}/api/Cargo
+Accept: application/json
+
+### Get a cargo by Id
+GET {{BaseURL}}/api/Cargo/1
+Accept: application/json
+
+### Add a new cargo
+POST {{BaseURL}}/api/Cargo
+Content-Type: application/json
+
+{
+  "cargoCode": "C122",
+  "description": "Books",
+  "weight": 300,
+  "status": 0,
+  "isInWarehouse": true,
+  "isInAirplane": false,
+  "warehouseId": 1
+}
+
+### Update a cargo by Id
+PUT {{BaseURL}}/api/Cargo/1
+Content-Type: application/json
+
+{
+  "cargoCode": "C666",
+  "description": "Books",
+  "weight": 300,
+  "status": 0,
+  "isInWarehouse": true,
+  "isInAirplane": false,
+  "warehouseId": 1
+}
+
+### Delete a cargo by Id
+DELETE {{BaseURL}}/api/Cargo/23

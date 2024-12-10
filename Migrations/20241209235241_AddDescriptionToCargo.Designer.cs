@@ -3,6 +3,7 @@ using CargosMonitor.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CargosMonitor.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20241209235241_AddDescriptionToCargo")]
+    partial class AddDescriptionToCargo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,16 +157,33 @@ namespace CargosMonitor.Migrations
                         new
                         {
                             CargoId = 5,
-                            AirplaneId = 1,
                             CargoCode = "C105",
-                            Description = "Machinery Parts",
-                            Status = 1,
-                            Weight = 1500m
+                            Description = "Food Products",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 800m
                         },
                         new
                         {
                             CargoId = 6,
                             CargoCode = "C106",
+                            Description = "Machinery Parts",
+                            Status = 2,
+                            Weight = 1500m
+                        },
+                        new
+                        {
+                            CargoId = 7,
+                            CargoCode = "C107",
+                            Description = "Household Goods",
+                            Status = 0,
+                            WarehouseId = 2,
+                            Weight = 700m
+                        },
+                        new
+                        {
+                            CargoId = 8,
+                            CargoCode = "C108",
                             Description = "Industrial Equipment",
                             Status = 0,
                             WarehouseId = 1,
@@ -171,21 +191,108 @@ namespace CargosMonitor.Migrations
                         },
                         new
                         {
-                            CargoId = 7,
-                            AirplaneId = 2,
-                            CargoCode = "C107",
+                            CargoId = 9,
+                            CargoCode = "C109",
+                            Description = "Toys",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 400m
+                        },
+                        new
+                        {
+                            CargoId = 10,
+                            CargoCode = "C110",
+                            Description = "Books",
+                            Status = 0,
+                            WarehouseId = 2,
+                            Weight = 600m
+                        },
+                        new
+                        {
+                            CargoId = 11,
+                            CargoCode = "C111",
+                            Description = "Office Supplies",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 550m
+                        },
+                        new
+                        {
+                            CargoId = 12,
+                            CargoCode = "C112",
                             Description = "Automotive Parts",
-                            Status = 1,
+                            Status = 2,
                             Weight = 900m
                         },
                         new
                         {
-                            CargoId = 8,
-                            AirplaneId = 3,
-                            CargoCode = "C108",
+                            CargoId = 13,
+                            CargoCode = "C113",
+                            Description = "Construction Materials",
+                            Status = 2,
+                            Weight = 1100m
+                        },
+                        new
+                        {
+                            CargoId = 14,
+                            CargoCode = "C114",
+                            Description = "Pharmaceuticals",
+                            Status = 0,
+                            WarehouseId = 2,
+                            Weight = 250m
+                        },
+                        new
+                        {
+                            CargoId = 15,
+                            CargoCode = "C115",
+                            Description = "Consumer Electronics",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 750m
+                        },
+                        new
+                        {
+                            CargoId = 16,
+                            CargoCode = "C116",
+                            Description = "Textiles",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 500m
+                        },
+                        new
+                        {
+                            CargoId = 17,
+                            CargoCode = "C117",
+                            Description = "Cosmetics",
+                            Status = 0,
+                            WarehouseId = 2,
+                            Weight = 300m
+                        },
+                        new
+                        {
+                            CargoId = 18,
+                            CargoCode = "C118",
                             Description = "Chemical Products",
-                            Status = 1,
+                            Status = 2,
                             Weight = 850m
+                        },
+                        new
+                        {
+                            CargoId = 19,
+                            CargoCode = "C119",
+                            Description = "Sports Equipment",
+                            Status = 0,
+                            WarehouseId = 1,
+                            Weight = 400m
+                        },
+                        new
+                        {
+                            CargoId = 20,
+                            CargoCode = "C120",
+                            Description = "Pet Supplies",
+                            Status = 0,
+                            WarehouseId = 2,
+                            Weight = 600m
                         });
                 });
 
