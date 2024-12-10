@@ -1,5 +1,6 @@
 ﻿@page "/more-about-warehouse/{WarehouseId:int}"
 @inject IWarehouseService WarehouseService
+@inject ICargoService CargoService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
@@ -23,16 +24,30 @@
 
 <table class="table">
     <thead>
-    <th>Cargo Code</th>
-    <th>Description</th>
-    <th>Weight (kg)</th>
+    <tr>
+        <th>Cargo Code</th>
+        <th>Description</th>
+        <th>Weight (kg)</th>
+    </tr>
     </thead>
     <tbody>
-    <tr>
-        <td> </td>
-        <td> </td>
-        <td> </td>
-    </tr>
+    @if (CargosInWarehouse is not null && CargosInWarehouse.Any())
+    {
+        @foreach (var cargo in CargosInWarehouse)
+        {
+            <tr>
+                <td>@cargo.CargoCode</td>
+                <td>@cargo.Description</td>
+                <td>@cargo.Weight</td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="3">No packages found for this warehouse.</td>
+        </tr>
+    }
     </tbody>
 </table>
 
@@ -40,7 +55,8 @@
     [Parameter] public int? WarehouseId { get; set; }
 
     public Warehouse CurrentWarehouse { get; set; } = new();
-
+    public List<Cargo> CargosInWarehouse { get; set; } = new();
+    
     protected override async Task OnParametersSetAsync()
     {
         if (WarehouseId is not null)
@@ -51,6 +67,10 @@
                 CurrentWarehouse = warehouse;
             }
         }
+        
+        CargosInWarehouse = await CargoService.GetCargosByWarehouseIdAsync((int)WarehouseId);
     }
+    
+    
     
 }
