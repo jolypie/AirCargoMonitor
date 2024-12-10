@@ -60,6 +60,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xIb21lLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
+[C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/MoreInfo/MoreAirplane.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNb3JlSW5mb1xNb3JlQWlycGxhbmUucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/MoreInfo/MoreWarehouse.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xNb3JlSW5mb1xNb3JlV2FyZWhvdXNlLnJhem9y
+build_metadata.AdditionalFiles.CssScope = 
+
 [C:/Users/bonni/RiderProjects/CargosMonitor/CargosMonitor/Components/Pages/Warehouses.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXYXJlaG91c2VzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

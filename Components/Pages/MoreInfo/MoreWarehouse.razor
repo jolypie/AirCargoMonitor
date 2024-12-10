@@ -1,0 +1,56 @@
+﻿@page "/more-about-warehouse/{WarehouseId:int}"
+@inject IWarehouseService WarehouseService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<PageTitle>More Info about @CurrentWarehouse.WarehouseCode Warehouse</PageTitle>
+<h3>More Info about @CurrentWarehouse.WarehouseCode Warehouse</h3>
+
+<table class="table">
+    <thead>
+    <th>Location</th>
+    <th>Code</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td >@CurrentWarehouse.Location</td>
+        <td>@CurrentWarehouse.WarehouseCode</td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>All packages in @CurrentWarehouse.WarehouseCode Warehouse</h3>
+
+<table class="table">
+    <thead>
+    <th>Cargo Code</th>
+    <th>Description</th>
+    <th>Weight (kg)</th>
+    </thead>
+    <tbody>
+    <tr>
+        <td> </td>
+        <td> </td>
+        <td> </td>
+    </tr>
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public int? WarehouseId { get; set; }
+
+    public Warehouse CurrentWarehouse { get; set; } = new();
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (WarehouseId is not null)
+        {
+            var warehouse = await WarehouseService.GetWarehouseByIdAsync((int)WarehouseId);
+            if (warehouse is not null)
+            {
+                CurrentWarehouse = warehouse;
+            }
+        }
+    }
+    
+}

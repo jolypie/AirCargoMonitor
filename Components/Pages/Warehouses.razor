@@ -24,10 +24,10 @@ else
         @foreach (var warehouse in warehouses)
         {
             <tr>
-                <td>@warehouse.Location</td>
+                <td >@warehouse.Location</td>
                 <td>@warehouse.WarehouseCode</td>
                 <td>
-                    <button class="btn btn-success">More</button>
+                    <button class="btn btn-success" @onclick="@((() => MoreWarehouse(warehouse.WarehouseId)))">More</button>
                 </td>
                 <td>
                     <button class="btn btn-primary" @onclick="@(() => EditWarehouse(warehouse.WarehouseId))">Edit</button>
@@ -76,6 +76,11 @@ else
     void EditWarehouse(int id)
     {
         NavigationManager.NavigateTo($"/edit-warehouse/{id}");
+    }    
+    
+    void MoreWarehouse(int id)
+    {
+        NavigationManager.NavigateTo($"/more-about-warehouse/{id}");
     }
 
     void AddWarehouse()
