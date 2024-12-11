@@ -40,5 +40,6 @@ public class Cargo
     public int? WarehouseId { get; set; }
     public Warehouse? Warehouse { get; set; }
     
-    
+    public DateTime? AddedToWarehouseAt { get; set; }
+    public DateTime? AddedToAirplaneAt { get; set; }
 }

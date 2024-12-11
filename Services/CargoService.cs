@@ -27,17 +27,28 @@ public class CargoService : ICargoService
     public async Task<Cargo> GetCargoByIdAsync(int id)
     {
         return await _context.Cargos
-            .FirstOrDefaultAsync(a => a.CargoId == id);
+            .Include(c => c.Warehouse)
+            .Include(c => c.Airplane)
+            .FirstOrDefaultAsync(c => c.CargoId == id);
     }
+
     
     
     // POST one cargo
     public async Task AddCargoAsync(Cargo cargo)
     {
-        if (cargo.Status == default)
+        if (string.IsNullOrWhiteSpace(cargo.CargoCode))
         {
-            cargo.Status = CargoStatus.InWarehouse;
+            throw new ArgumentException("CargoCode is required.");
         }
+
+        if (cargo.Weight <= 0)
+        {
+            throw new ArgumentException("Weight must be greater than zero.");
+        }
+
+        cargo.Status = cargo.Status == default ? CargoStatus.InWarehouse : cargo.Status;
+        cargo.AddedToWarehouseAt = DateTime.UtcNow;
 
         ValidateCargoStatus(cargo);
 
@@ -48,7 +59,7 @@ public class CargoService : ICargoService
     // PUT one cargo
     public async Task UpdateCargoAsync(Cargo updatedCargo, int id)
     {
-        var dbCargo = await _context.Cargos.FindAsync(id) 
+        var dbCargo = await _context.Cargos.FindAsync(id)
                       ?? throw new Exception("Cargo not found");
 
         dbCargo.CargoCode = updatedCargo.CargoCode;
@@ -163,6 +174,8 @@ public class CargoService : ICargoService
         cargo.Status = CargoStatus.InPlane;
         cargo.AirplaneId = airplaneId;
         cargo.WarehouseId = null;
+        cargo.AddedToAirplaneAt = DateTime.UtcNow;
+        cargo.AddedToWarehouseAt = null;
 
         airplane.CurrentLoad += cargo.Weight;
 
@@ -204,6 +217,8 @@ public class CargoService : ICargoService
         cargo.Status = CargoStatus.InWarehouse;
         cargo.WarehouseId = warehouseId;
         cargo.AirplaneId = null;
+        cargo.AddedToWarehouseAt = DateTime.UtcNow;
+        cargo.AddedToAirplaneAt = null;
 
         await _context.SaveChangesAsync();
     }

@@ -58,10 +58,8 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        // Load warehouses
         Warehouses = await WarehouseService.GetAllWarehousesAsync();
 
-        // Load cargo if editing
         if (CargoId is not null)
         {
             var cargo = await CargoService.GetCargoByIdAsync((int)CargoId);
@@ -88,12 +86,10 @@ else
 
         if (CargoId is not null)
         {
-            // Update existing cargo
             await CargoService.UpdateCargoAsync(CurrentCargo, (int)CargoId);
         }
         else
         {
-            // Add new cargo
             await CargoService.AddCargoAsync(CurrentCargo);
         }
 

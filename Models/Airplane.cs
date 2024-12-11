@@ -20,7 +20,8 @@ public class Airplane
     [Column(TypeName = "decimal(18,2)")]
     public decimal CurrentLoad { get; set; } 
     
+    [Required]
     [ForeignKey("Warehouse")]
-    public int? WarehouseId { get; set; } 
-    public Warehouse? Warehouse { get; set; }
+    public int WarehouseId { get; set; } 
+    public Warehouse Warehouse { get; set; }
 }

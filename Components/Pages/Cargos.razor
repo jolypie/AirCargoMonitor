@@ -4,7 +4,12 @@
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 <PageTitle>Cargos</PageTitle>
-<h1>List of Cargos</h1>
+
+<div class="btn-group py-4" role="group" aria-label="Cargo Filters">
+    <button class="btn btn-secondary" @onclick="ShowAllCargos" disabled="@(currentFilter == CargoFilter.All)">All Cargos</button>
+    <button class="btn btn-secondary" @onclick="ShowCargosInWarehouses" disabled="@(currentFilter == CargoFilter.InWarehouse)">Cargos in Warehouses</button>
+    <button class="btn btn-secondary" @onclick="ShowCargosInAirplanes" disabled="@(currentFilter == CargoFilter.InAirplane)">Cargos in Airplanes</button>
+</div>
 
 @if (cargos.Count == 0)
 {
@@ -14,38 +19,60 @@ else
 {
     <table class="table">
         <thead>
-        <th>Cargo Code</th>
-        <th>Description</th>
-        <th>Weight (kg)</th>
-        <th>Location</th>
-        <th>Edit</th>
-        <th>Delete</th>
+            <th>Cargo Code</th>
+            <th>Description</th>
+            <th>Weight (kg)</th>
+            <th>Location</th>
+            <th>Added to Warehouse At</th>
+            <th>Added to Airplane At</th>
+
+            @if (currentFilter == CargoFilter.InWarehouse || currentFilter == CargoFilter.InAirplane)
+            {
+                <th>Move</th>
+            }
+
+            <th>Edit</th>
+            <th>Delete</th>
         </thead>
         <tbody>
-        @foreach (var cargo in cargos)
-        {
-            <tr>
-                <td>@cargo.CargoCode</td>
-                <td>@cargo.Description</td>
-                <td>@cargo.Weight</td>
-                <td>@(cargo.Status == CargoStatus.InWarehouse ? cargo.Warehouse?.WarehouseCode : cargo.Airplane?.AirplaneCode)</td>
+            @foreach (var cargo in cargos)
+            {
+                <tr>
+                    <td>@cargo.CargoCode</td>
+                    <td>@cargo.Description</td>
+                    <td>@cargo.Weight</td>
+                    <td>@(cargo.Status == CargoStatus.InWarehouse ? cargo.Warehouse?.WarehouseCode : cargo.Airplane?.AirplaneCode)</td>
+                    <td>@cargo.AddedToWarehouseAt</td>
+                    <td>@cargo.AddedToAirplaneAt</td>
 
-                <td>
-                    <button class="btn btn-primary" @onclick="@(() => EditCargo(cargo.CargoId))">Edit</button>
-                </td>
-                <td>
-                    <button class="btn btn-danger" @onclick="@(() => ShowDeleteConfirmation(cargo.CargoId))">Delete</button>
-                </td>
-            </tr>
-        }
+                    @if (currentFilter == CargoFilter.InWarehouse)
+                    {
+                        <td>
+                            <button class="btn btn-success" @onclick="@(() => MoveCargoToAirplane(cargo.CargoId))">Move to Airplane</button>
+                        </td>
+                    }
+                    @if (currentFilter == CargoFilter.InAirplane)
+                    {
+                        <td>
+                            <button class="btn btn-success" @onclick="@(() => MoveCargoToWarehouse(cargo.CargoId))">Move to Warehouse</button>
+                        </td>
+                    }
+                    
+                    <td>
+                        <button class="btn btn-primary" @onclick="@(() => EditCargo(cargo.CargoId))">Edit</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger" @onclick="@(() => ShowDeleteConfirmation(cargo.CargoId))">Delete</button>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 
     <button class="btn btn-primary" @onclick="AddCargo">Add a New Cargo</button>
-    
 }
 
-<!-- Modal -->
+<!-- Modal for deletion confirmation -->
 <div class="modal fade show" tabindex="-1" role="dialog" style="display: @(isDeleteModalVisible ? "block" : "none");">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -57,52 +84,89 @@ else
                 <p>Are you sure you want to delete this cargo?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" @onclick="HideDeleteConfirmation">Cancel</button>
                 <button type="button" class="btn btn-danger" @onclick="ConfirmDeleteCargo">Delete</button>
+                <button type="button" class="btn btn-success" @onclick="HideDeleteConfirmation">Cancel</button>
             </div>
         </div>
     </div>
 </div>
 
 @code {
-    List<Cargo> cargos = new List<Cargo>();
-    bool isDeleteModalVisible = false;
-    int cargoIdToDelete = 0;
+    private List<Cargo> cargos = new List<Cargo>();
+    private bool isDeleteModalVisible = false;
+    private int cargoIdToDelete = 0;
+    private CargoFilter currentFilter = CargoFilter.All;
 
     protected override async Task OnInitializedAsync()
     {
         cargos = await CargoService.GetAllCargosAsync();
     }
 
-    void EditCargo(int id)
+    private async Task ShowAllCargos()
+    {
+        currentFilter = CargoFilter.All;
+        cargos = await CargoService.GetAllCargosAsync();
+    }
+
+    private async Task ShowCargosInWarehouses()
+    {
+        currentFilter = CargoFilter.InWarehouse;
+        cargos = await CargoService.GetCargosInWarehousesAsync();
+    }
+
+    private async Task ShowCargosInAirplanes()
+    {
+        currentFilter = CargoFilter.InAirplane;
+        cargos = await CargoService.GetCargosInAirplanesAsync();
+    }
+
+    private void EditCargo(int id)
     {
         NavigationManager.NavigateTo($"/edit-cargo/{id}");
     }
 
-    void AddCargo()
+    private void AddCargo()
     {
         NavigationManager.NavigateTo("/edit-cargo");
+    }    
+    
+    private void MoveCargoToAirplane(int id)
+    {
+        NavigationManager.NavigateTo($"/move-cargo-to-airplane/{id}");
+    }    
+    
+    private void MoveCargoToWarehouse(int id)
+    {
+        NavigationManager.NavigateTo($"/move-warehouse/{id}");
     }
 
-    void ShowDeleteConfirmation(int id)
+    private void ShowDeleteConfirmation(int id)
     {
         isDeleteModalVisible = true;
         cargoIdToDelete = id;
     }
 
-    void HideDeleteConfirmation()
+    private void HideDeleteConfirmation()
     {
         isDeleteModalVisible = false;
         cargoIdToDelete = 0;
     }
 
-    async Task ConfirmDeleteCargo()
+    private async Task ConfirmDeleteCargo()
     {
         if (cargoIdToDelete != 0)
         {
             await CargoService.DeleteCargoAsync(cargoIdToDelete);
             cargos = await CargoService.GetAllCargosAsync();
         }
+
         HideDeleteConfirmation();
+    }
+
+    private enum CargoFilter
+    {
+        All,
+        InWarehouse,
+        InAirplane
     }
 }

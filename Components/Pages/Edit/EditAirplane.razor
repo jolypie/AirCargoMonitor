@@ -53,10 +53,8 @@ else
 
     protected override async Task OnParametersSetAsync()
     {
-        // Load warehouses
         Warehouses = await WarehouseService.GetAllWarehousesAsync();
 
-        // Load airplane if editing
         if (AirplaneId is not null)
         {
             var airplane = await AirplaneService.GetAirplaneByIdAsync((int)AirplaneId);
@@ -73,16 +71,14 @@ else
         {
             Console.WriteLine("Error: Airplane code is required.");
             return;
-        }
+        }      
 
         if (AirplaneId is not null)
         {
-            // Update existing airplane
             await AirplaneService.UpdateAirplaneAsync(CurrentAirplane, (int)AirplaneId);
         }
         else
         {
-            // Add new airplane
             await AirplaneService.AddAirplaneAsync(CurrentAirplane);
         }
 

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CargosMonitor")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6bc6db169200f002ab47bf8b9e4bd9938ec706fc")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ddbb0d0446a8562d5de6bb54c019ab865e839d1e")]
 [assembly: System.Reflection.AssemblyProductAttribute("CargosMonitor")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CargosMonitor")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

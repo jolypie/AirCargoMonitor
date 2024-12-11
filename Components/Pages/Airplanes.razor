@@ -18,7 +18,7 @@ else
         <th>Code</th>
         <th>Max Load (kg)</th>
         <th>Current Load (kg)</th>
-        <th>City</th>
+        <th>Warehouse Location</th>
         <th>Warehouse Code</th>
         <th>Edit Airplane</th>
         <th>Delete Airplane</th>
@@ -31,12 +31,12 @@ else
                 <td>@airplane.MaxLoad</td>
                 <td>@airplane.CurrentLoad</td>
                 <td>
-                    @(warehouses.TryGetValue(airplane.WarehouseId ?? 0, out var warehouse1)
+                    @(warehouses.TryGetValue(airplane.WarehouseId, out var warehouse1)
                         ? warehouse1.Location
                         : "No Warehouse")
                 </td>
                 <td>
-                    @(warehouses.TryGetValue(airplane.WarehouseId ?? 0, out var warehouse2)
+                    @(warehouses.TryGetValue(airplane.WarehouseId, out var warehouse2)
                         ? warehouse2.Code
                         : "No Warehouse")
                 </td>
@@ -69,8 +69,8 @@ else
                 <p>Are you sure you want to delete this airplane?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" @onclick="HideDeleteConfirmation">Cancel</button>
                 <button type="button" class="btn btn-danger" @onclick="ConfirmDeleteAirplane">Delete</button>
+                <button type="button" class="btn btn-success" @onclick="HideDeleteConfirmation">Cancel</button>
             </div>
         </div>
     </div>

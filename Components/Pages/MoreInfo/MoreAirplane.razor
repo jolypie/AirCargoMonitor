@@ -5,72 +5,81 @@
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<PageTitle>More Info about @CurrentAirplane.AirplaneCode Airplane</PageTitle>
-<h3>More Info about @CurrentAirplane.AirplaneCode Airplane</h3>
+<PageTitle>More Info about @CurrentAirplane?.AirplaneCode Airplane</PageTitle>
+<h3>More Info about @CurrentAirplane?.AirplaneCode Airplane</h3>
 
-<table class="table">
-    <thead>
-    <th>Code</th>
-    <th>Max Load (kg)</th>
-    <th>Current Load (kg)</th>
-    </thead>
-    <tbody>
-    <tr>
-        <td>@CurrentAirplane.AirplaneCode</td>
-        <td>@CurrentAirplane.MaxLoad</td>
-        <td>@CurrentAirplane.CurrentLoad</td>
-    </tr>
-    </tbody>
-</table>
+@if (CurrentAirplane is not null)
+{
+    <table class="table">
+        <thead>
+        <th>Code</th>
+        <th>Max Load (kg)</th>
+        <th>Current Load (kg)</th>
+        <th>Attached Warehouse</th>
+        <th>Location</th>
+        </thead>
+        <tbody>
+        <tr>
+            <td>@CurrentAirplane.AirplaneCode</td>
+            <td>@CurrentAirplane.MaxLoad</td>
+            <td>@CurrentAirplane.CurrentLoad</td>
+            <td>@(CurrentAirplane.Warehouse?.WarehouseCode ?? "N/A")</td>
+            <td>@(CurrentAirplane.Warehouse?.Location ?? "N/A")</td>
+        </tr>
+        </tbody>
+    </table>
 
-<h3>All cargos in @CurrentAirplane.AirplaneCode Airplane</h3>
+    <h3>All cargos in @CurrentAirplane.AirplaneCode Airplane</h3>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>Cargo Code</th>
-        <th>Description</th>
-        <th>Weight (kg)</th>
-    </tr>
-    </thead>
-    <tbody>
-    @if (CargosInAirplane is not null && CargosInAirplane.Any())
-    {
-        @foreach (var cargo in CargosInAirplane)
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Cargo Code</th>
+            <th>Description</th>
+            <th>Weight (kg)</th>
+            <th>Added to Airplane At</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (CargosInAirplane is not null && CargosInAirplane.Any())
+        {
+            @foreach (var cargo in CargosInAirplane)
+            {
+                <tr>
+                    <td>@cargo.CargoCode</td>
+                    <td>@cargo.Description</td>
+                    <td>@cargo.Weight</td>
+                    <td>@cargo.AddedToAirplaneAt</td>
+                </tr>
+            }
+        }
+        else
         {
             <tr>
-                <td>@cargo.CargoCode</td>
-                <td>@cargo.Description</td>
-                <td>@cargo.Weight</td>
+                <td colspan="3">No packages found for this airplane.</td>
             </tr>
         }
-    }
-    else
-    {
-        <tr>
-            <td colspan="3">No packages found for this warehouse.</td>
-        </tr>
-    }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No airplane data available.</p>
+}
 
 @code {
     [Parameter] public int? AirplaneId { get; set; }
 
-    public Airplane CurrentAirplane { get; set; } = new();
+    public Airplane? CurrentAirplane { get; set; }
     public List<Cargo> CargosInAirplane { get; set; } = new();
 
     protected override async Task OnParametersSetAsync()
     {
         if (AirplaneId is not null)
         {
-            var airplane = await AirplaneService.GetAirplaneByIdAsync((int)AirplaneId);
-            if (airplane is not null)
-            {
-                CurrentAirplane = airplane;
-            }
+            CurrentAirplane = await AirplaneService.GetAirplaneByIdAsync((int)AirplaneId) ?? new Airplane();
+            CargosInAirplane = await CargoService.GetCargosByAirplaneIdAsync((int)AirplaneId) ?? new List<Cargo>();
         }
-
-        CargosInAirplane = await CargoService.GetCargosByAirplaneIdAsync((int)AirplaneId);
     }
 }
+

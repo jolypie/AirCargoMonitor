@@ -12,6 +12,8 @@ public interface ICargoService
     
     Task<List<Cargo>> GetCargosByWarehouseIdAsync(int warehouseId);
     Task<List<Cargo>> GetCargosByAirplaneIdAsync(int airplaneId);
+    Task<List<Cargo>> GetCargosInWarehousesAsync();
+    Task<List<Cargo>> GetCargosInAirplanesAsync();
     
     Task AddCargoToAirplaneAsync(int cargoId, int airplaneId);
     Task RemoveCargoFromAirplaneAsync(int cargoId);

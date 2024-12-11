@@ -1,0 +1,11 @@
+﻿@page "/move-warehouse/{WarehouseId:int}"
+@inject IWarehouseService WarehouseService
+@inject IAirplaneService AirplaneService
+@inject NavigationManager NavigationManager
+@rendermode InteractiveServer
+
+<h3>Move To Warehouse</h3>
+
+@code {
+    [Parameter] public int? WarehouseId { get; set; }
+}

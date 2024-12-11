@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 namespace CargosMonitor.Services;
 
 public class AirplaneService : IAirplaneService
-
 {
     private readonly DataContext _context;
 
@@ -17,67 +16,129 @@ public class AirplaneService : IAirplaneService
     // GET all airplanes
     public async Task<List<Airplane>> GetAllAirplanesAsync()
     {
-        var result = await _context.Airplanes.ToListAsync();
-        return result;
+        return await _context.Airplanes.AsNoTracking().ToListAsync();
     }
-    
-    //GET one airplane
+
+    // GET one airplane by ID
     public async Task<Airplane> GetAirplaneByIdAsync(int id)
     {
-        return await _context.Airplanes
-            .FirstOrDefaultAsync(a => a.AirplaneId == id);
+        var airplane = await _context.Airplanes.AsNoTracking().FirstOrDefaultAsync(a => a.AirplaneId == id);
+        if (airplane == null)
+        {
+            throw new InvalidOperationException("Airplane not found.");
+        }
+        return airplane;
     }
-    
-    //POST new airplane
+
+    // POST new airplane
     public async Task AddAirplaneAsync(Airplane airplane)
     {
+        if (string.IsNullOrWhiteSpace(airplane.AirplaneCode))
+        {
+            throw new InvalidOperationException("AirplaneCode is required and cannot be empty.");
+        }
+        if (airplane.AirplaneCode.Length > 10)
+        {
+            throw new InvalidOperationException("AirplaneCode must be 10 characters or fewer.");
+        }
+        if (airplane.MaxLoad <= 0)
+        {
+            throw new InvalidOperationException("MaxLoad must be greater than zero.");
+        }
+        if (airplane.WarehouseId <= 0)
+        {
+            throw new InvalidOperationException("Valid WarehouseId is required.");
+        }
+
+        var codeExists = await _context.Airplanes.AnyAsync(a => a.AirplaneCode == airplane.AirplaneCode);
+        if (codeExists)
+        {
+            throw new InvalidOperationException("AirplaneCode must be unique.");
+        }
+
+        var warehouseExists = await _context.Warehouses.AnyAsync(w => w.WarehouseId == airplane.WarehouseId);
+        if (!warehouseExists)
+        {
+            throw new InvalidOperationException("Warehouse not found.");
+        }
+
         airplane.CurrentLoad = 0;
-        await _context.Airplanes.AddAsync(airplane);
+
+        _context.Airplanes.Add(airplane);
         await _context.SaveChangesAsync();
     }
-    
-    //PUT update one airplane
+
+    // PUT update airplane
     public async Task UpdateAirplaneAsync(Airplane airplane, int id)
     {
         var dbAirplane = await _context.Airplanes.FindAsync(id);
-        if (dbAirplane != null)
+        if (dbAirplane == null)
         {
-            dbAirplane.AirplaneCode = airplane.AirplaneCode;
-            dbAirplane.MaxLoad = airplane.MaxLoad;
-            dbAirplane.CurrentLoad = airplane.CurrentLoad;
-            dbAirplane.WarehouseId = airplane.WarehouseId;
-            
-            await _context.SaveChangesAsync();
+            throw new InvalidOperationException("Airplane not found.");
         }
-        else
+
+        // Validate inputs
+        if (string.IsNullOrWhiteSpace(airplane.AirplaneCode))
         {
-            throw new Exception("Airplane not found");
+            throw new InvalidOperationException("AirplaneCode is required and cannot be empty.");
         }
+        if (airplane.AirplaneCode.Length > 10)
+        {
+            throw new InvalidOperationException("AirplaneCode must be 10 characters or fewer.");
+        }
+        if (airplane.MaxLoad <= 0)
+        {
+            throw new InvalidOperationException("MaxLoad must be greater than zero.");
+        }
+        if (airplane.CurrentLoad < 0 || airplane.CurrentLoad > airplane.MaxLoad)
+        {
+            throw new InvalidOperationException("CurrentLoad must be between 0 and MaxLoad.");
+        }
+        if (airplane.WarehouseId <= 0)
+        {
+            throw new InvalidOperationException("Valid WarehouseId is required.");
+        }
+
+        // Check if Warehouse exists
+        var warehouseExists = await _context.Warehouses.AnyAsync(w => w.WarehouseId == airplane.WarehouseId);
+        if (!warehouseExists)
+        {
+            throw new InvalidOperationException("Warehouse not found.");
+        }
+
+        // Update airplane properties
+        dbAirplane.AirplaneCode = airplane.AirplaneCode;
+        dbAirplane.MaxLoad = airplane.MaxLoad;
+        dbAirplane.CurrentLoad = airplane.CurrentLoad;
+        dbAirplane.WarehouseId = airplane.WarehouseId;
+
+        await _context.SaveChangesAsync();
     }
-    
-    //DELETE one airplane
+
+    // DELETE airplane by ID
     public async Task DeleteAirplaneAsync(int id)
     {
         var airplane = await _context.Airplanes.FindAsync(id);
-        if (airplane != null)
+        if (airplane == null)
         {
-            _context.Airplanes.Remove(airplane);
-            await _context.SaveChangesAsync();
+            throw new InvalidOperationException("Airplane not found.");
         }
-        else
-        {
-            throw new Exception("Airplane not found");
-        }
-    }
-    
-    
-    //GET all airplanes that are attached to a particular warehouse by id
-    public async Task<List<Airplane>> GetAirplanesByWarehouseIdAsync(int WarehouseId)
-    {
-        return await _context.Airplanes
-            .Where(a => a.WarehouseId == WarehouseId)
-            .ToListAsync();
-    }    
-    
 
+        _context.Airplanes.Remove(airplane);
+        await _context.SaveChangesAsync();
+    }
+
+    // GET all airplanes by WarehouseId
+    public async Task<List<Airplane>> GetAirplanesByWarehouseIdAsync(int warehouseId)
+    {
+        var warehouseExists = await _context.Warehouses.AnyAsync(w => w.WarehouseId == warehouseId);
+        if (!warehouseExists)
+        {
+            throw new InvalidOperationException("Warehouse not found.");
+        }
+
+        return await _context.Airplanes.AsNoTracking()
+            .Where(a => a.WarehouseId == warehouseId)
+            .ToListAsync();
+    }
 }

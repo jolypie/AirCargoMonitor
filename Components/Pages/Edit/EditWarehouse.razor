@@ -55,18 +55,40 @@ else
 
     async Task HandleSubmit()
     {
+        if (string.IsNullOrWhiteSpace(CurrentWarehouse.WarehouseCode))
+        {
+            Console.WriteLine("Error: Warehouse code is required.");
+            return;
+        }
+
+        if (CurrentWarehouse.WarehouseCode.Length > 5)
+        {
+            Console.WriteLine("Error: Warehouse code must not exceed 5 characters.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(CurrentWarehouse.Location))
+        {
+            Console.WriteLine("Error: Location is required.");
+            return;
+        }
+
+        if (CurrentWarehouse.Location.Length > 100)
+        {
+            Console.WriteLine("Error: Location must not exceed 100 characters.");
+            return;
+        }
+
         if (WarehouseId is not null)
         {
-            //Update
             await WarehouseService.UpdateWarehouseAsync(CurrentWarehouse, (int)WarehouseId);
-            NavigationManager.NavigateTo("/warehouses");
         }
         else
         {
-            //Add
             await WarehouseService.AddWarehouseAsync(CurrentWarehouse);
-            NavigationManager.NavigateTo("/warehouses");
         }
+
+        NavigationManager.NavigateTo("/warehouses");
     }
 
     void Cancel()
