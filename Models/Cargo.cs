@@ -34,6 +34,8 @@ public class Cargo
     public int? AirplaneId { get; set; }
     public Airplane? Airplane { get; set; }
     
+    
+    
     [ForeignKey("Warehouse")]
     public int? WarehouseId { get; set; }
     public Warehouse? Warehouse { get; set; }

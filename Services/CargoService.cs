@@ -36,7 +36,7 @@ public class CargoService : ICargoService
     {
         if (cargo.Status == default)
         {
-            cargo.Status = CargoStatus.InWarehouse; // Статус по умолчанию
+            cargo.Status = CargoStatus.InWarehouse;
         }
 
         ValidateCargoStatus(cargo);
@@ -104,6 +104,110 @@ public class CargoService : ICargoService
             .ToListAsync();
     }
     
+    //GET all cargos that are in a warehouses
+    public async Task<List<Cargo>> GetCargosInWarehousesAsync()
+    {
+        return await _context.Cargos
+            .Where(c => c.Status == CargoStatus.InWarehouse)
+            .Include(c => c.Warehouse)
+            .ToListAsync();
+    }
+    
+        
+    //GET all cargos that are in aiplanes
+    public async Task<List<Cargo>> GetCargosInAirplanesAsync()
+    {
+        return await _context.Cargos
+            .Where(c => c.Status == CargoStatus.InPlane)
+            .Include(c => c.Airplane)
+            .ToListAsync();
+    }
+    
+    //POST one cargo by id to an airplane by id
+    public async Task AddCargoToAirplaneAsync(int cargoId, int airplaneId)
+    {
+        var cargo = await _context.Cargos
+            .Include(c => c.Airplane)
+            .Include(c => c.Warehouse)
+            .FirstOrDefaultAsync(c => c.CargoId == cargoId);
+
+        if (cargo == null)
+        {
+            throw new Exception("Cargo not found.");
+        }
+
+        if (cargo.Status != CargoStatus.InWarehouse)
+        {
+            throw new InvalidOperationException("Only cargos in warehouses can be added to airplanes.");
+        }
+
+        var airplane = await _context.Airplanes
+            .Include(a => a.Warehouse)
+            .FirstOrDefaultAsync(a => a.AirplaneId == airplaneId);
+
+        if (airplane == null)
+        {
+            throw new Exception("Airplane not found.");
+        }
+
+        if (cargo.WarehouseId != airplane.Warehouse?.WarehouseId)
+        {
+            throw new InvalidOperationException("The cargo and airplane must be in the same warehouse.");
+        }
+
+        if (airplane.CurrentLoad + cargo.Weight > airplane.MaxLoad)
+        {
+            throw new InvalidOperationException("The airplane does not have enough capacity for this cargo.");
+        }
+
+        cargo.Status = CargoStatus.InPlane;
+        cargo.AirplaneId = airplaneId;
+        cargo.WarehouseId = null;
+
+        airplane.CurrentLoad += cargo.Weight;
+
+        await _context.SaveChangesAsync();
+    }
+
+    
+    // POST one cargo from an airplane back to a warehouse
+    public async Task RemoveCargoFromAirplaneAsync(int cargoId)
+    {
+        var cargo = await _context.Cargos
+            .Include(c => c.Airplane)
+            .FirstOrDefaultAsync(c => c.CargoId == cargoId);
+
+        if (cargo == null)
+        {
+            throw new Exception("Cargo not found.");
+        }
+
+        if (cargo.Status != CargoStatus.InPlane)
+        {
+            throw new InvalidOperationException("Only cargos in airplanes can be moved back to warehouses.");
+        }
+
+        var airplane = cargo.Airplane;
+        if (airplane == null)
+        {
+            throw new Exception("Airplane not found for the cargo.");
+        }
+
+        var warehouseId = airplane.WarehouseId;
+        if (warehouseId == null)
+        {
+            throw new Exception("No warehouse associated with the airplane.");
+        }
+
+        airplane.CurrentLoad -= cargo.Weight;
+
+        cargo.Status = CargoStatus.InWarehouse;
+        cargo.WarehouseId = warehouseId;
+        cargo.AirplaneId = null;
+
+        await _context.SaveChangesAsync();
+    }
+
     
     
     private void ValidateCargoStatus(Cargo cargo)
@@ -123,4 +227,6 @@ public class CargoService : ICargoService
             throw new InvalidOperationException("Invalid cargo status.");
         }
     }
+    
+
 }

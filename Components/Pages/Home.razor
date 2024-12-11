@@ -16,6 +16,8 @@
                         <li class="list-group-item">When creating a new Cargo, it must be attached to an existing Warehouse.</li>
                         <li class="list-group-item">Cargo cannot exist outside a Warehouse or an Airplane.</li>
                         <li class="list-group-item">Users can attach a Cargo to an Airplane after creation, if desired.</li>
+                        <li class="list-group-item">You can attach Cargo from a specific Warehouse only to Airplanes that are attached to this specific Warehouse</li>
+                        <li class="list-group-item">You can return Cargo from an Airplane to a specific Warehouse that is attached to this Airplane</li>
                     </ul>
                 </div>
             </div>
@@ -30,6 +32,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">When creating a new Airplane, it must be attached to an existing Warehouse.</li>
                         <li class="list-group-item">Airplanes cannot exist without being attached to a Warehouse.</li>
+                        <li class="list-group-item">By default Airplane.CurrentLoad = 0</li>
                     </ul>
                 </div>
             </div>

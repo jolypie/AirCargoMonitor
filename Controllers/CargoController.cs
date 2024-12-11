@@ -78,7 +78,7 @@ public class CargoController : ControllerBase
     
     
     [HttpGet("Airplane/{AirplaneId}")]
-    public async Task<IActionResult> GetCargosByAirplaneIdAsync(int AirplaneId)
+    public async Task<IActionResult> GetCargosByAirplaneId(int AirplaneId)
     {
         var cargos = await _cargoService.GetCargosByAirplaneIdAsync(AirplaneId);
         if (cargos == null || cargos.Count == 0)
@@ -88,6 +88,56 @@ public class CargoController : ControllerBase
 
         return Ok(cargos);
     }
+    
+    
+    [HttpPost("add-to-airplane")]
+    public async Task<IActionResult> AddCargoToAirplane([FromBody] AddToAirplaneRequest request)
+    {
+        try
+        {
+            await _cargoService.AddCargoToAirplaneAsync(request.CargoId, request.AirplaneId);
+            return Ok(new { Message = "Cargo successfully added to the airplane." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = ex.Message });
+        }
+    }
+
+    [HttpPost("remove-from-airplane")]
+    public async Task<IActionResult> RemoveCargoFromAirplane([FromBody] RemoveFromAirplaneRequest request)
+    {
+        try
+        {
+            await _cargoService.RemoveCargoFromAirplaneAsync(request.CargoId);
+            return Ok(new { Message = "Cargo successfully removed from the airplane and returned to the original warehouse." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { Message = ex.Message });
+        }
+    }
+
+// DTOs
+    public class AddToAirplaneRequest
+    {
+        public int CargoId { get; set; }
+        public int AirplaneId { get; set; }
+    }
+
+    public class RemoveFromAirplaneRequest
+    {
+        public int CargoId { get; set; }
+    }
+
 }
 
 
