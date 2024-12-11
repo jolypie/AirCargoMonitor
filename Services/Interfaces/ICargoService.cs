@@ -20,4 +20,7 @@ public interface ICargoService
     
     Task<List<Cargo>> GetCargosInAirplanesByWarehouseIdAsync(int warehouseId);
 
+    
+    
+
 }

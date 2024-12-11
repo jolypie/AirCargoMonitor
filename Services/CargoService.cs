@@ -23,6 +23,8 @@ public class CargoService : ICargoService
         return result;
     }
     
+
+    
     // GET one cargo
     public async Task<Cargo> GetCargoByIdAsync(int id)
     {
@@ -239,7 +241,8 @@ public class CargoService : ICargoService
             .ToListAsync();
     }
 
-    
+
+
     
     private void ValidateCargoStatus(Cargo cargo)
     {

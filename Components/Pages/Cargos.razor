@@ -6,9 +6,15 @@
 <PageTitle>Cargos</PageTitle>
 
 <div class="btn-group py-4" role="group" aria-label="Cargo Filters">
-    <button class="btn btn-secondary" @onclick="ShowAllCargos" disabled="@(currentFilter == CargoFilter.All)">All Cargos</button>
-    <button class="btn btn-secondary" @onclick="ShowCargosInWarehouses" disabled="@(currentFilter == CargoFilter.InWarehouse)">Cargos in Warehouses</button>
-    <button class="btn btn-secondary" @onclick="ShowCargosInAirplanes" disabled="@(currentFilter == CargoFilter.InAirplane)">Cargos in Airplanes</button>
+    <button class="btn btn-secondary" @onclick="ShowAllCargos" disabled="@(currentFilter == CargoFilter.All)">All
+        Cargos
+    </button>
+    <button class="btn btn-secondary" @onclick="ShowCargosInWarehouses"
+            disabled="@(currentFilter == CargoFilter.InWarehouse)">Cargos in Warehouses
+    </button>
+    <button class="btn btn-secondary" @onclick="ShowCargosInAirplanes"
+            disabled="@(currentFilter == CargoFilter.InAirplane)">Cargos in Airplanes
+    </button>
 </div>
 
 @if (cargos.Count == 0)
@@ -19,53 +25,73 @@ else
 {
     <table class="table">
         <thead>
-            <th>Cargo Code</th>
-            <th>Description</th>
-            <th>Weight (kg)</th>
-            <th>Location</th>
-            <th>Added to Warehouse At</th>
-            <th>Added to Airplane At</th>
+        <th>Cargo Code</th>
+        <th>Description</th>
+        <th>
+            <button class="btn btn-link p-0" @onclick="SortByWeight">
+                Weight (kg) @(sortDirection == SortDirection.Ascending && currentSortColumn == "Weight" ? "↑" : "↓")
+            </button>
+        </th>
+        <th>Location</th>
+        <th>
+            <button class="btn btn-link p-0" @onclick="SortByWarehouseTime">
+                Added to Warehouse
+                At @(sortDirection == SortDirection.Ascending && currentSortColumn == "WarehouseTime" ? "↑" : "↓")
+            </button>
+        </th>
+        <th>
+            <button class="btn btn-link p-0" @onclick="SortByAirplaneTime">
+                Added to Airplane
+                At @(sortDirection == SortDirection.Ascending && currentSortColumn == "AirplaneTime" ? "↑" : "↓")
+            </button>
+        </th>
 
-            @if (currentFilter == CargoFilter.InWarehouse || currentFilter == CargoFilter.InAirplane)
-            {
-                <th>Move</th>
-            }
+        @if (currentFilter == CargoFilter.InWarehouse || currentFilter == CargoFilter.InAirplane)
+        {
+            <th>Move</th>
+        }
 
-            <th>Edit</th>
-            <th>Delete</th>
+        <th>Edit</th>
+        <th>Delete</th>
         </thead>
-        <tbody>
-            @foreach (var cargo in cargos)
-            {
-                <tr>
-                    <td>@cargo.CargoCode</td>
-                    <td>@cargo.Description</td>
-                    <td>@cargo.Weight</td>
-                    <td>@(cargo.Status == CargoStatus.InWarehouse ? cargo.Warehouse?.WarehouseCode : cargo.Airplane?.AirplaneCode)</td>
-                    <td>@cargo.AddedToWarehouseAt</td>
-                    <td>@cargo.AddedToAirplaneAt</td>
 
-                    @if (currentFilter == CargoFilter.InWarehouse)
-                    {
-                        <td>
-                            <button class="btn btn-success" @onclick="@(() => MoveCargoToAirplane(cargo.CargoId))">Move to Airplane</button>
-                        </td>
-                    }
-                    @if (currentFilter == CargoFilter.InAirplane)
-                    {
-                        <td>
-                            <button class="btn btn-success" @onclick="@(() => MoveCargoToWarehouse(cargo.CargoId))">Move to Warehouse</button>
-                        </td>
-                    }
-                    
+        <tbody>
+        @foreach (var cargo in cargos)
+        {
+            <tr>
+                <td>@cargo.CargoCode</td>
+                <td>@cargo.Description</td>
+                <td>@cargo.Weight</td>
+                <td>@(cargo.Status == CargoStatus.InWarehouse ? cargo.Warehouse?.WarehouseCode : cargo.Airplane?.AirplaneCode)</td>
+                <td>@cargo.AddedToWarehouseAt</td>
+                <td>@cargo.AddedToAirplaneAt</td>
+
+                @if (currentFilter == CargoFilter.InWarehouse)
+                {
                     <td>
-                        <button class="btn btn-primary" @onclick="@(() => EditCargo(cargo.CargoId))">Edit</button>
+                        <button class="btn btn-success" @onclick="@(() => MoveCargoToAirplane(cargo.CargoId))">Move to
+                            Airplane
+                        </button>
                     </td>
+                }
+                @if (currentFilter == CargoFilter.InAirplane)
+                {
                     <td>
-                        <button class="btn btn-danger" @onclick="@(() => ShowDeleteConfirmation(cargo.CargoId))">Delete</button>
+                        <button class="btn btn-success" @onclick="@(() => MoveCargoToWarehouse(cargo.CargoId))">Move to
+                            Warehouse
+                        </button>
                     </td>
-                </tr>
-            }
+                }
+
+                <td>
+                    <button class="btn btn-primary" @onclick="@(() => EditCargo(cargo.CargoId))">Edit</button>
+                </td>
+                <td>
+                    <button class="btn btn-danger" @onclick="@(() => ShowDeleteConfirmation(cargo.CargoId))">Delete
+                    </button>
+                </td>
+            </tr>
+        }
         </tbody>
     </table>
 
@@ -128,13 +154,13 @@ else
     private void AddCargo()
     {
         NavigationManager.NavigateTo("/edit-cargo");
-    }    
-    
+    }
+
     private void MoveCargoToAirplane(int id)
     {
         NavigationManager.NavigateTo($"/move-cargo-to-airplane/{id}");
-    }    
-    
+    }
+
     private void MoveCargoToWarehouse(int id)
     {
         NavigationManager.NavigateTo($"/move-warehouse/{id}");
@@ -169,4 +195,55 @@ else
         InWarehouse,
         InAirplane
     }
+
+    ///
+    private string currentSortColumn = string.Empty;
+
+    private SortDirection sortDirection = SortDirection.Ascending;
+
+    private void SortByWeight()
+    {
+        ToggleSortDirection("Weight");
+        cargos = sortDirection == SortDirection.Ascending
+            ? cargos.OrderBy(c => c.Weight).ToList()
+            : cargos.OrderByDescending(c => c.Weight).ToList();
+    }
+
+    private void SortByWarehouseTime()
+    {
+        ToggleSortDirection("WarehouseTime");
+        cargos = sortDirection == SortDirection.Ascending
+            ? cargos.OrderBy(c => c.AddedToWarehouseAt).ToList()
+            : cargos.OrderByDescending(c => c.AddedToWarehouseAt).ToList();
+    }
+
+    private void SortByAirplaneTime()
+    {
+        ToggleSortDirection("AirplaneTime");
+        cargos = sortDirection == SortDirection.Ascending
+            ? cargos.OrderBy(c => c.AddedToAirplaneAt).ToList()
+            : cargos.OrderByDescending(c => c.AddedToAirplaneAt).ToList();
+    }
+
+    private void ToggleSortDirection(string column)
+    {
+        if (currentSortColumn == column)
+        {
+            sortDirection = sortDirection == SortDirection.Ascending
+                ? SortDirection.Descending
+                : SortDirection.Ascending;
+        }
+        else
+        {
+            currentSortColumn = column;
+            sortDirection = SortDirection.Ascending;
+        }
+    }
+
+    private enum SortDirection
+    {
+        Ascending,
+        Descending
+    }
+
 }
