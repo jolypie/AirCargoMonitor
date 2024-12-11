@@ -70,6 +70,8 @@ public class WarehouseService : IWarehouseService
         await _context.SaveChangesAsync();
     }
     
+
+    
     private void ValidateWarehouse(Warehouse warehouse)
     {
         if (warehouse == null)

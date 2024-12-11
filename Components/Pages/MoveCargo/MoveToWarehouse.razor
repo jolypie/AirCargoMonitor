@@ -1,11 +1,85 @@
 ﻿@page "/move-warehouse/{WarehouseId:int}"
 @inject IWarehouseService WarehouseService
 @inject IAirplaneService AirplaneService
+@inject ICargoService CargoService
 @inject NavigationManager NavigationManager
 @rendermode InteractiveServer
 
-<h3>Move To Warehouse</h3>
+<h3>Return Cargo to Warehouse</h3>
+
+@if (CurrentWarehouse != null && CargosInAirplanes.Any())
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Cargo Code</th>
+            <th>Description</th>
+            <th>Weight (kg)</th>
+            <th>Airplane Code</th>
+            <th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var cargo in CargosInAirplanes)
+        {
+            <tr>
+                <td>@cargo.CargoCode</td>
+                <td>@cargo.Description</td>
+                <td>@cargo.Weight</td>
+                <td>@cargo.Airplane?.AirplaneCode</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => ReturnCargoToWarehouse(cargo.CargoId)">
+                        Return to Warehouse
+                    </button>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else if (CurrentWarehouse == null)
+{
+    <p>Loading warehouse details...</p>
+}
+else
+{
+    <p>No cargos available in airplanes for this warehouse.</p>
+}
 
 @code {
-    [Parameter] public int? WarehouseId { get; set; }
+    [Parameter] public int WarehouseId { get; set; }
+
+    private Warehouse CurrentWarehouse { get; set; }
+    private List<Cargo> CargosInAirplanes { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            CurrentWarehouse = await WarehouseService.GetWarehouseByIdAsync(WarehouseId);
+
+            if (CurrentWarehouse != null)
+            {
+                CargosInAirplanes = await CargoService.GetCargosInAirplanesByWarehouseIdAsync(WarehouseId);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
+    }
+
+    private async Task ReturnCargoToWarehouse(int cargoId)
+    {
+        try
+        {
+            await CargoService.RemoveCargoFromAirplaneAsync(cargoId);
+
+            NavigationManager.NavigateTo($"/more-about-warehouse/{WarehouseId}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error returning cargo to warehouse: {ex.Message}");
+        }
+    }
 }

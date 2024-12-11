@@ -224,6 +224,22 @@ public class CargoService : ICargoService
     }
 
     
+    // GET all cargos in airplanes by WarehouseId
+    public async Task<List<Cargo>> GetCargosInAirplanesByWarehouseIdAsync(int warehouseId)
+    {
+        var warehouseExists = await _context.Warehouses.AnyAsync(w => w.WarehouseId == warehouseId);
+        if (!warehouseExists)
+        {
+            throw new InvalidOperationException("Warehouse not found.");
+        }
+
+        return await _context.Cargos
+            .Include(c => c.Airplane)
+            .Where(c => c.Status == CargoStatus.InPlane && c.Airplane.WarehouseId == warehouseId)
+            .ToListAsync();
+    }
+
+    
     
     private void ValidateCargoStatus(Cargo cargo)
     {

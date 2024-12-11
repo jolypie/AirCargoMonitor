@@ -55,10 +55,8 @@ else
     {
         try
         {
-            // Load the cargo details
             CurrentCargo = await CargoService.GetCargoByIdAsync(CargoId);
 
-            // Load airplanes in the same warehouse as the cargo
             if (CurrentCargo?.WarehouseId != null)
             {
                 AirplanesInWarehouse = await AirplaneService.GetAirplanesByWarehouseIdAsync((int)CurrentCargo.WarehouseId);
