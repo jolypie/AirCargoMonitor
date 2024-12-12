@@ -17,6 +17,10 @@ builder.Services.AddScoped<ICargoService, CargoService>();
 builder.Services.AddControllers();
 
 
+// Set the port for deployment
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
 var app = builder.Build();
 app.MapControllers();
 // Configure the HTTP request pipeline.
